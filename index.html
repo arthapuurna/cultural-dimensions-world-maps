@@ -20,8 +20,39 @@
 
 <p>
 Cultural data based on modified Hofstede results, consistent with GLOBE, Schwartz and others.
-
 </p>
+
+<img class="compress" src="Power_distance_score.png" alt="Power Distance Map">
+<img class="compress" src="Individualism_score.png" alt="Individualism Map">
+
+<script>
+function compressImage(img, scale = 0.6, quality = 0.7) {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = img.naturalWidth * scale;
+  canvas.height = img.naturalHeight * scale;
+
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  // JPEG daje realną kompresję (PNG nie)
+  return canvas.toDataURL("image/jpeg", quality);
+}
+
+window.addEventListener("load", () => {
+  document.querySelectorAll("img.compress").forEach(img => {
+    const original = img.src;
+
+    img.onload = () => {
+      const compressed = compressImage(img, 0.6, 0.75);
+      img.src = compressed;
+    };
+
+    // wymuszenie przeładowania, jeśli cache
+    img.src = original;
+  });
+});
+</script>
 
 </body>
 </html>

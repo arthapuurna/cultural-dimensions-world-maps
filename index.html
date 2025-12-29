@@ -23,31 +23,36 @@ Cultural data based on modified Hofstede results, consistent with GLOBE, Schwart
 </p>
 
 <script>
-function compressImage(img, scale = 0.6, quality = 0.7) {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+function compressImage(img, scale = 0.6, quality = 0.75) {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
 
-  canvas.width = img.naturalWidth * scale;
-  canvas.height = img.naturalHeight * scale;
+  const width = img.naturalWidth * scale;
+  const height = img.naturalHeight * scale;
 
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  canvas.width = width;
+  canvas.height = height;
 
-  // JPEG daje realną kompresję (PNG nie)
-  return canvas.toDataURL("image/jpeg", quality);
+  ctx.drawImage(img, 0, 0, width, height);
+
+  return canvas.toDataURL("image/jpeg", quality);
 }
 
 window.addEventListener("load", () => {
-  document.querySelectorAll("img.compress").forEach(img => {
-    const original = img.src;
+  document.querySelectorAll("img.compress").forEach(img => {
 
-    img.onload = () => {
-      const compressed = compressImage(img, 0.6, 0.75);
-      img.src = compressed;
-    };
+    // zabezpieczenie: tylko raz
+    if (img.dataset.compressed) return;
 
-    // wymuszenie przeładowania, jeśli cache
-    img.src = original;
-  });
+    img.addEventListener("load", () => {
+      if (img.dataset.compressed) return;
+
+      const compressed = compressImage(img);
+      img.dataset.compressed = "true";
+      img.src = compressed;
+    }, { once: true });
+
+  });
 });
 </script>
 
